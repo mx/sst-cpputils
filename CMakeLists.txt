@@ -15,7 +15,7 @@ if (MSVC)
     else ()
         message(STATUS "Including __cplusplus etc for MSVC-not-clang")
         target_compile_options(${PROJECT_NAME} INTERFACE
-                /Zc:__cplusplus,enumTypes,templateScope,throwingNew,preprocesso)
+                /Zc:__cplusplus,enumTypes,templateScope,throwingNew,preprocessor)
     endif ()
 endif ()
 

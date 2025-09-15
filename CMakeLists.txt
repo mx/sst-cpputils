@@ -2,23 +2,24 @@ cmake_minimum_required(VERSION 3.10)
 project(sst-cpputils VERSION 1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} INTERFACE
-            /utf-8 /bigobj /diagnostics:color /permissive-
-            /Zc:__cplusplus,enumTypes,templateScope,throwingNew,preprocessor)
+            /utf-8 /bigobj /permissive-)
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        message(STATUS "Skipping __cplusplus etc for clang-cl")
+    else ()
+        message(STATUS "Including __cplusplus etc for MSVC-not-clang")
+        target_compile_options(${PROJECT_NAME} INTERFACE
+                /Zc:__cplusplus,enumTypes,templateScope,throwingNew,preprocesso)
+    endif ()
 endif ()
 
-get_directory_property(parent_dir PARENT_DIRECTORY)
-if ("${parent_dir}" STREQUAL "")
-    set(is_toplevel 1)
-else ()
-    set(is_toplevel 0)
-endif ()
-option(SST_CPPUTILS_BUILD_TESTS "Add targets for building and running sst-cpputils tests" ${is_toplevel})
+option(SST_CPPUTILS_BUILD_TESTS "Add targets for building and running sst-cpputils tests" ${PROJECT_IS_TOP_LEVEL})
 
 if (SST_CPPUTILS_BUILD_TESTS)
     add_executable(sst-cpputils-tests)

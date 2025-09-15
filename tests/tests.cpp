@@ -62,7 +62,7 @@ TEST_CASE("Enumerate")
     {
         auto empty = [](const auto &v) {
             bool never{true};
-            for (const auto [i, j] : sst::cpputils::enumerate(v))
+            for (const auto _ : sst::cpputils::enumerate(v))
             {
                 never = false;
             }
@@ -166,11 +166,11 @@ TEST_CASE("Zip")
     SECTION("ZIP with Empty")
     {
         std::vector<int> test{0, 1, 2}, empty;
-        for (const auto &[a, b] : sst::cpputils::zip(test, empty))
+        for (const auto &_ : sst::cpputils::zip(test, empty))
         {
             REQUIRE(false);
         }
-        for (const auto &[a, b] : sst::cpputils::zip(empty, test))
+        for (const auto &_ : sst::cpputils::zip(empty, test))
         {
             REQUIRE(false);
         }
@@ -355,16 +355,16 @@ TEST_CASE("StereoRingBuffer")
         sst::cpputils::StereoRingBuffer<float, 4> buf;
         buf.push(0, 1);
         buf.push(2, 3);
-        REQUIRE(*buf.pop() == P{0, 1});
-        REQUIRE(*buf.pop() == P{2, 3});
+        REQUIRE(*buf.pop() == P{0.f, 1.f});
+        REQUIRE(*buf.pop() == P{2.f, 3.f});
 
         // Get the write marker past the end.
         buf.push(2, 2);
         buf.push(3, 3);
         buf.push(4, 4);
-        REQUIRE(*buf.pop() == P{2, 2});
-        REQUIRE(*buf.pop() == P{3, 3});
-        REQUIRE(*buf.pop() == P{4, 4});
+        REQUIRE(*buf.pop() == P{2.f, 2.f});
+        REQUIRE(*buf.pop() == P{3.f, 3.f});
+        REQUIRE(*buf.pop() == P{4.f, 4.f});
 
         // Should be empty.
         REQUIRE(!buf.pop().has_value());
@@ -379,7 +379,7 @@ TEST_CASE("StereoRingBuffer")
         // Now write another one, the read value should be skipped to the end and we're empty,
         // skipping the entire previous batch of writes.
         buf.push(9, 9);
-        REQUIRE(*buf.pop() == P{9, 9});
+        REQUIRE(*buf.pop() == P{9.f, 9.f});
         REQUIRE(!buf.pop().has_value());
     }
 
@@ -763,7 +763,7 @@ TEST_CASE("ActiveSet")
 
     auto len = [](const auto &as) {
         int idx = 0;
-        for (const auto &x : as)
+        for (const auto _ : as)
             idx++;
         return idx;
     };

@@ -47,6 +47,9 @@ template <typename T, class Allocator = std::allocator<T>> class DynArray
     using reverse_iterator = std::reverse_iterator<iterator>;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+    // Null DynArray, will need to be reset() later.
+    explicit DynArray(Allocator a = Allocator()) : mem_(nullptr), n_(0), alloc_(a) {}
+
     //
     // Creates an array that stores "n" elements.
     // Initializes them with the provided arguments.
@@ -199,6 +202,9 @@ template <typename T, class A>
 DynArray<T, A>::DynArray(std::initializer_list<T> init_list, A a)
     : mem_(nullptr), n_(init_list.size()), alloc_(std::move(a))
 {
+    if (n_ == 0)
+        return;
+
     mem_ = alloc_.allocate(n_);
     std::uninitialized_move(std::make_move_iterator(init_list.begin()),
                             std::make_move_iterator(init_list.end()), mem_);
@@ -209,6 +215,9 @@ template <std::forward_iterator Iterator>
 DynArray<T, A>::DynArray(Iterator begin, Iterator end, A a)
     : alloc_(a), mem_(nullptr), n_(std::distance(begin, end))
 {
+    if (n_ == 0)
+        return;
+
     mem_ = alloc_.allocate(n_);
     try
     {

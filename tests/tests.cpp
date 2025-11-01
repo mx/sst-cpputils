@@ -1073,6 +1073,8 @@ TEST_CASE("DynArray")
         REQUIRE(alignof(int) < 128);
         REQUIRE(reinterpret_cast<std::uint64_t>(std::to_address(a.data())) % 128 == 0);
     }
+
+    SECTION("Null") { sst::cpputils::DynArray<int> x{}; }
 }
 
 int main(int argc, char **argv)
